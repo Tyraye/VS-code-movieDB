@@ -54,38 +54,18 @@ class FilmCategoryRow extends React.Component {
   }
 }
 
-class Package extends React.Component() {
-  render() {
-    return (
-      <tr>
-        <td>
-          <td>{film_id}</td>
-          <td>{title}</td>
-          <td>{description}</td>
-          <td>{release_year}</td>
-          <td>{length}</td>
-          <td>{rating}</td>
-          <td>{language_id}</td>
-          <td>{actor}</td>
-        </td>
-      </tr>
-    );
-  }
-}
-
 class FilmRow extends React.Component {
-  componentDidMount() {
-    fetch("http://52.207.221.141:8080/Home/AllFilms")
-      .then((response) => response.json())
-      .then((jsonData) => {
-        const packages = jsonData.result;
-        this.setState({
-          top10results: [],
-        });
-      });
+  constructor(props) {
+    super(props);
+    this.state = { films: [] };
   }
-  componentDidUpdate() {
-    console.log(this.state.top10results);
+
+  componentDidMount() {
+    axios
+      .get("http://localhost:8080/Home/AllFilms")
+      .then((response) =>
+        this.setState({ filmDataFromServer: response.data.total })
+      );
   }
 
   render() {
@@ -317,6 +297,6 @@ const FILMS = [
 ];
 
 ReactDOM.render(
-  <FilterableFilmTable films={packages} />,
+  <FilterableFilmTable films={FILMS} />,
   document.getElementById("root")
 );
