@@ -2,6 +2,38 @@ import { render } from "@testing-library/react";
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
+import Button from "react-bootstrap/Button";
+import axios from "axios";
+
+class DatabasePackages extends React.Component {
+  render() {
+    return null;
+  }
+}
+
+class Buttons extends React.Component {
+  render() {
+    return (
+      <>
+        <Button variant="primary">Primary</Button>{" "}
+        <Button variant="secondary">Secondary</Button>{" "}
+        <Button variant="success">Success</Button>{" "}
+        <Button variant="warning">Warning</Button>{" "}
+        <Button variant="danger">Danger</Button>{" "}
+        <Button variant="info">Info</Button>{" "}
+        <Button variant="light">Light</Button>{" "}
+        <Button variant="dark">Dark</Button>{" "}
+        <Button variant="link">Link</Button>
+      </>
+    );
+  }
+}
+
+class SearchBar extends React.Component {
+  render() {
+    return <div>SearchBar placeholder</div>;
+  }
+}
 
 class FilmCategoryRow extends React.Component {
   render() {
@@ -22,7 +54,40 @@ class FilmCategoryRow extends React.Component {
   }
 }
 
+class Package extends React.Component() {
+  render() {
+    return (
+      <tr>
+        <td>
+          <td>{film_id}</td>
+          <td>{title}</td>
+          <td>{description}</td>
+          <td>{release_year}</td>
+          <td>{length}</td>
+          <td>{rating}</td>
+          <td>{language_id}</td>
+          <td>{actor}</td>
+        </td>
+      </tr>
+    );
+  }
+}
+
 class FilmRow extends React.Component {
+  componentDidMount() {
+    fetch("http://52.207.221.141:8080/Home/AllFilms")
+      .then((response) => response.json())
+      .then((jsonData) => {
+        const packages = jsonData.result;
+        this.setState({
+          top10results: [],
+        });
+      });
+  }
+  componentDidUpdate() {
+    console.log(this.state.top10results);
+  }
+
   render() {
     const film = this.props.film;
     console.log(this.props.film[0]);
@@ -106,10 +171,12 @@ class FilterableFilmTable extends React.Component {
     return (
       <div>
         hello
+        <SearchBar />
         <FilmTable
           films={this.props.films}
           filterText={this.state.filterText}
         />
+        <Buttons />
       </div>
     );
   }
@@ -250,6 +317,6 @@ const FILMS = [
 ];
 
 ReactDOM.render(
-  <FilterableFilmTable films={FILMS} />,
+  <FilterableFilmTable films={packages} />,
   document.getElementById("root")
 );
