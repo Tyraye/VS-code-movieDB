@@ -5,12 +5,6 @@ import "./index.css";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
 
-class DatabasePackages extends React.Component {
-  render() {
-    return null;
-  }
-}
-
 class Buttons extends React.Component {
   render() {
     return (
@@ -58,6 +52,20 @@ class LanguageRow extends React.Component {
   }
 }
 
+class ActorRow extends React.Component {
+  render() {
+    const actorData = this.props.actorInfo;
+
+    return (
+      <tr>
+        <td>{actorData.actor_id}</td>
+        <td>{actorData.first_name}</td>
+        <td>{actorData.last_name}</td>
+      </tr>
+    );
+  }
+}
+
 class FilmRow extends React.Component {
   render() {
     const filmData = this.props.filmInfo;
@@ -76,12 +84,51 @@ class FilmRow extends React.Component {
   }
 }
 
+////// POST INTO LANGUAGES ////////
 class AddLanguage extends React.Component {
+  state = {
+    name: "",
+  };
+
+  onNameChange = (e) => {
+    this.setState({
+      name: e.target.value,
+    });
+  };
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    axios
+      .post("http://localhost:8080/Home/AddLanguages?name=" + this.state.name)
+
+      .then((response) => console.log(response))
+      .catch((err) => console.log(err));
+  };
+
   render() {
-    return null;
+    return (
+      <div>
+        <form className="addLangForm" onSubmit={this.handleSubmit}>
+          <br></br>
+          <input
+            placeholder="Language Name"
+            value={this.state.name}
+            onChange={this.onNameChange}
+            required
+          />
+          <br></br>
+          <button type="submit">Add Language</button>
+        </form>
+        <br></br>
+      </div>
+    );
   }
 }
 
+////// Delete a Language ////////
+class DeleteLanguage extends React.Component {}
+
+///// Language table //////
 class LanguageTable extends React.Component {
   constructor(props) {
     super(props);
@@ -97,16 +144,10 @@ class LanguageTable extends React.Component {
   }
 
   render() {
-    //const filterText = this.props.filterText.toLowerCase();
     const language = this.state.languageDataFromServer;
     const rows = [];
-    //let lastCategory = null;
 
     this.state.languageDataFromServer.forEach((lang) => {
-      // if (lang.name.toLowerCase().indexOf(filterText) === -1) {
-      //   return;
-      // }
-
       rows.push(<LanguageRow languageInfo={lang} key={lang.language_id} />);
     });
 
@@ -123,7 +164,42 @@ class LanguageTable extends React.Component {
     );
   }
 }
-////////////// FILMS /////////////
+
+class ActorTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { actorDataFromServer: [] };
+  }
+
+  componentDidMount() {
+    axios
+      .get("http://localhost:8080/Home/AllActors")
+      .then((response) =>
+        this.setState({ actorDataFromServer: response.data })
+      );
+  }
+  render() {
+    const language = this.state.actorDataFromServer;
+    const rows = [];
+
+    this.state.actorDataFromServer.forEach((actor) => {
+      rows.push(<ActorRow actorInfo={actor} key={actor.actor_id} />);
+    });
+    return (
+      <table class="left">
+        <thead>
+          <tr>
+            <th>Actor ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </table>
+    );
+  }
+}
+////////////// FILMS TABLE DON'T TOUCH UNTIL AWS SERVER CHANGE /////////////
 class FilmTable extends React.Component {
   constructor(props) {
     super(props);
@@ -140,7 +216,6 @@ class FilmTable extends React.Component {
     const filterText = this.props.filterText.toLowerCase();
     const movie = this.state.filmDataFromServer;
     const rows = [];
-    //let lastCategory = null;
 
     this.state.filmDataFromServer.forEach((movie) => {
       if (movie.title.toLowerCase().indexOf(filterText) === -1) {
@@ -148,14 +223,6 @@ class FilmTable extends React.Component {
       }
 
       rows.push(<FilmRow filmInfo={movie} key={movie.film_id} />);
-
-      // lastCategory = film.actor.last_name;
-
-      // if (film.film_id !== lastCategory) {
-      //   rows.push(
-      //     <FilmCategoryRow film_id={film.film_id} key={film.film_id} />
-      //   );
-      // }
     });
 
     return (
@@ -169,9 +236,6 @@ class FilmTable extends React.Component {
             <th>Length</th>
             <th>Rating</th>
             <th>Language ID</th>
-            {/* <th>Lead actor ID</th>
-            <th>First Name</th>
-            <th>Last Name</th> */}
           </tr>
         </thead>
         <tbody>{rows}</tbody>
@@ -180,14 +244,20 @@ class FilmTable extends React.Component {
   }
 }
 
-class FilterableFilmTable extends React.Component {
+class FilterableTables extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       filterText: "",
     };
-
+    this.handleAddLanguageText = this.handleAddLanguageText.bind(this);
     this.handleFilterTextChange = this.handleFilterTextChange.bind(this);
+  }
+
+  handleAddLanguageText(AL) {
+    this.setState({
+      addLanguageText: AL,
+    });
   }
 
   handleFilterTextChange(FT) {
@@ -206,20 +276,26 @@ class FilterableFilmTable extends React.Component {
           }
         />
         <br />
-        Welcome to the Movie database
+        Welcome to the Movie database!
+        <br />
+        Add a Language into the database below and we will add it to Movies.
+        <br />
+        <AddLanguage />
+        <LanguageTable language={this.props.language} />
+        <br></br>
         <SearchBar
           filterText={this.state.filterText}
           onFilterTextChange={this.handleFilterTextChange}
         />
-        <Buttons />
-        <LanguageTable language={this.props.language} />
         <FilmTable
           films={this.props.films}
           filterText={this.state.filterText}
         />
+        <br></br>
+        <ActorTable />
       </div>
     );
   }
 }
 
-ReactDOM.render(<FilterableFilmTable />, document.getElementById("root"));
+ReactDOM.render(<FilterableTables />, document.getElementById("root"));
