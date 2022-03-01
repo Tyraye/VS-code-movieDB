@@ -31,24 +31,28 @@ class Buttons extends React.Component {
 
 class SearchBar extends React.Component {
   render() {
-    return <div>SearchBar placeholder</div>;
+    const filterText = this.props.filterText;
+    return (
+      <form>
+        <input
+          type="text"
+          placeholder="Search by Film name....."
+          value={filterText}
+          onChange={(e) => this.props.onFilterTextChange(e.target.value)}
+        />
+      </form>
+    );
   }
 }
 
-class FilmCategoryRow extends React.Component {
+class LanguageRow extends React.Component {
   render() {
-    const film_id = this.props.film_id;
+    const languageData = this.props.languageInfo;
 
     return (
       <tr>
-        <td>{film_id}</td>
-        {/* <td>{title}</td>
-        <td>{description}</td>
-        <td>{release_year}</td>
-        <td>{length}</td>
-        <td>{rating}</td>
-        <td>{language_id}</td>
-        <td>{actor}</td> */}
+        <td>{languageData.language_id}</td>
+        <td>{languageData.name}</td>
       </tr>
     );
   }
@@ -67,14 +71,59 @@ class FilmRow extends React.Component {
         <td>{filmData.length}</td>
         <td>{filmData.rating}</td>
         <td>{filmData.language_id}</td>
-        {/* <td>{filmData.actor[0].actor_id}</td>
-        <td>{filmData.actor[1].first_name}</td>
-        <td>{filmData.actor[2].last_name}</td> */}
       </tr>
     );
   }
 }
 
+class AddLanguage extends React.Component {
+  render() {
+    return null;
+  }
+}
+
+class LanguageTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { languageDataFromServer: [] };
+  }
+
+  componentDidMount() {
+    axios
+      .get("http://localhost:8080/Home/AllLanguages")
+      .then((response) =>
+        this.setState({ languageDataFromServer: response.data })
+      );
+  }
+
+  render() {
+    //const filterText = this.props.filterText.toLowerCase();
+    const language = this.state.languageDataFromServer;
+    const rows = [];
+    //let lastCategory = null;
+
+    this.state.languageDataFromServer.forEach((lang) => {
+      // if (lang.name.toLowerCase().indexOf(filterText) === -1) {
+      //   return;
+      // }
+
+      rows.push(<LanguageRow languageInfo={lang} key={lang.language_id} />);
+    });
+
+    return (
+      <table class="left">
+        <thead>
+          <tr>
+            <th>Language ID</th>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </table>
+    );
+  }
+}
+////////////// FILMS /////////////
 class FilmTable extends React.Component {
   constructor(props) {
     super(props);
@@ -88,13 +137,13 @@ class FilmTable extends React.Component {
   }
 
   render() {
-    const filterText = this.props.filterText;
+    const filterText = this.props.filterText.toLowerCase();
     const movie = this.state.filmDataFromServer;
     const rows = [];
     //let lastCategory = null;
 
     this.state.filmDataFromServer.forEach((movie) => {
-      if (movie.title.indexOf(filterText) === -1) {
+      if (movie.title.toLowerCase().indexOf(filterText) === -1) {
         return;
       }
 
@@ -120,9 +169,9 @@ class FilmTable extends React.Component {
             <th>Length</th>
             <th>Rating</th>
             <th>Language ID</th>
-            <th>Lead actor ID</th>
+            {/* <th>Lead actor ID</th>
             <th>First Name</th>
-            <th>Last Name</th>
+            <th>Last Name</th> */}
           </tr>
         </thead>
         <tbody>{rows}</tbody>
@@ -150,150 +199,27 @@ class FilterableFilmTable extends React.Component {
   render() {
     return (
       <div>
-        hello
-        <SearchBar />
+        <img
+          class="logo"
+          src={
+            "https://www.100daysofrealfood.com/wp-content/uploads/2011/06/popcorn1-1163x1536.jpg"
+          }
+        />
+        <br />
+        Welcome to the Movie database
+        <SearchBar
+          filterText={this.state.filterText}
+          onFilterTextChange={this.handleFilterTextChange}
+        />
+        <Buttons />
+        <LanguageTable language={this.props.language} />
         <FilmTable
           films={this.props.films}
           filterText={this.state.filterText}
         />
-        <Buttons />
       </div>
     );
   }
 }
 
 ReactDOM.render(<FilterableFilmTable />, document.getElementById("root"));
-
-// const FILMS = [
-//   {
-//     film_id: 102,
-//     title: "BUBBLE GROSSE",
-//     description:
-//       "A Awe-Inspiring Panorama of a Crocodile And a Moose who must Confront a Girl in A Baloon",
-//     release_year: 2006,
-//     length: 60,
-//     rating: "R",
-//     language_id: 1,
-//     actor: [
-//       {
-//         actor_id: 158,
-//         first_name: "VIVIEN",
-//         last_name: "BASINGER",
-//       },
-//       {
-//         actor_id: 188,
-//         first_name: "ROCK",
-//         last_name: "DUKAKIS",
-//       },
-//       {
-//         actor_id: 170,
-//         first_name: "MENA",
-//         last_name: "HOPPER",
-//       },
-//     ],
-//   },
-//   {
-//     film_id: 107,
-//     title: "BUNCH MINDS",
-//     description:
-//       "A Emotional Story of a Feminist And a Feminist who must Escape a Pastry Chef in A MySQL Convention",
-//     release_year: 2006,
-//     length: 63,
-//     rating: "G",
-//     language_id: 1,
-//     actor: [
-//       {
-//         actor_id: 98,
-//         first_name: "CHRIS",
-//         last_name: "BRIDGES",
-//       },
-//       {
-//         actor_id: 139,
-//         first_name: "EWAN",
-//         last_name: "GOODING",
-//       },
-//       {
-//         actor_id: 167,
-//         first_name: "LAURENCE",
-//         last_name: "BULLOCK",
-//       },
-//       {
-//         actor_id: 142,
-//         first_name: "JADA",
-//         last_name: "RYDER",
-//       },
-//       {
-//         actor_id: 28,
-//         first_name: "WOODY",
-//         last_name: "HOFFMAN",
-//       },
-//       {
-//         actor_id: 40,
-//         first_name: "JOHNNY",
-//         last_name: "CAGE",
-//       },
-//       {
-//         actor_id: 130,
-//         first_name: "GRETA",
-//         last_name: "KEITEL",
-//       },
-//       {
-//         actor_id: 12,
-//         first_name: "KARL",
-//         last_name: "BERRY",
-//       },
-//     ],
-//   },
-//   {
-//     film_id: 345,
-//     title: "GABLES METROPOLIS",
-//     description:
-//       "A Fateful Display of a Cat And a Pioneer who must Challenge a Pastry Chef in A Baloon Factory",
-//     release_year: 2006,
-//     length: 161,
-//     rating: "PG",
-//     language_id: 1,
-//     actor: [
-//       {
-//         actor_id: 64,
-//         first_name: "RAY",
-//         last_name: "JOHANSSON",
-//       },
-//       {
-//         actor_id: 172,
-//         first_name: "GROUCHO",
-//         last_name: "WILLIAMS",
-//       },
-//       {
-//         actor_id: 106,
-//         first_name: "GROUCHO",
-//         last_name: "DUNST",
-//       },
-//       {
-//         actor_id: 128,
-//         first_name: "CATE",
-//         last_name: "MCQUEEN",
-//       },
-//       {
-//         actor_id: 16,
-//         first_name: "FRED",
-//         last_name: "COSTNER",
-//       },
-//       {
-//         actor_id: 132,
-//         first_name: "ADAM",
-//         last_name: "HOPPER",
-//       },
-//       {
-//         actor_id: 48,
-//         first_name: "FRANCES",
-//         last_name: "DAY-LEWIS",
-//       },
-//       {
-//         actor_id: 26,
-//         first_name: "RIP",
-//         last_name: "CRAWFORD",
-//       },
-//     ],
-//   },
-// ];

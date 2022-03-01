@@ -13,3 +13,10 @@ div.button {
   margin-left: auto;
   margin-right: auto;
 }
+
+img.logo {
+  height: 130;
+  width: 5%;
+  border: 2px solid rgb(186, 236, 47);
+  float: center;
+}
