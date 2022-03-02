@@ -126,7 +126,122 @@ class AddLanguage extends React.Component {
 }
 
 ////// Delete a Language ////////
-class DeleteLanguage extends React.Component {}
+class DeleteLanguage extends React.Component {
+  state = {
+    language_id: "",
+  };
+
+  handleChange = (event) => {
+    this.setState({ language_id: event.target.value });
+  };
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+
+    axios
+      .delete(
+        `http://localhost:8080/Home/DeleteLanguage/${this.state.language_id}`
+      )
+      .then((response) => {
+        console.log(response);
+        console.log(response.data);
+      });
+  };
+
+  render() {
+    return (
+      <div>
+        <form onSubmit={this.handleSubmit}>
+          <label>
+            Language ID:
+            <input
+              type="text"
+              name="Language ID"
+              onChange={this.handleChange}
+            />
+          </label>
+          <button type="submit">Delete Language</button>
+        </form>
+      </div>
+    );
+  }
+}
+
+/////// PUT request /////////
+class UpdateAnActor extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      actor_id: "",
+      first_name: "",
+      last_name: "",
+    };
+  }
+
+  onActorIDChange = (e) => {
+    this.setState({
+      actor_id: e.target.value,
+    });
+  };
+  onFirstNameChange = (e) => {
+    this.setState({
+      first_name: e.target.value,
+    });
+  };
+  onLastNameChange = (e) => {
+    this.setState({
+      last_name: e.target.value,
+    });
+  };
+
+  handleSubmit = (e) => {
+    e.preventDefauft();
+
+    axios
+      .put(
+        "http://localhost:8080/Home/UpdateActor/" +
+          this.state.actor_id +
+          "?first_name=" +
+          this.state.first_name +
+          "?last_name=" +
+          this.state.last_name
+      )
+      // Error handling
+      .then((response) => console.log(response))
+      .catch((err) => console.log(err));
+  };
+
+  render() {
+    return (
+      <div>
+        <form onSubmit={this.handleSubmit}>
+          <input
+            placeholder="Actor ID"
+            value={this.state.actor_id}
+            onChange={this.onActorIDChange}
+            required
+          />
+          <input
+            placeholder="First Name"
+            value={this.state.first_name}
+            onChange={this.onFirstNameChange}
+            required
+          />
+          <input
+            placeholder="Last Name"
+            value={this.state.last_name}
+            onChange={this.onLastNameChange}
+            required
+          />
+
+          <br></br>
+
+          <button type="submit">Update Actors</button>
+        </form>
+      </div>
+    );
+  }
+}
 
 ///// Language table //////
 class LanguageTable extends React.Component {
@@ -164,7 +279,7 @@ class LanguageTable extends React.Component {
     );
   }
 }
-
+////// Actor Table ///////
 class ActorTable extends React.Component {
   constructor(props) {
     super(props);
@@ -281,7 +396,10 @@ class FilterableTables extends React.Component {
         Add a Language into the database below and we will add it to Movies.
         <br />
         <AddLanguage />
+        <DeleteLanguage />
         <LanguageTable language={this.props.language} />
+        <br></br>
+        <UpdateAnActor />
         <br></br>
         <SearchBar
           filterText={this.state.filterText}
