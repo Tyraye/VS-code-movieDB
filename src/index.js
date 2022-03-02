@@ -175,6 +175,7 @@ class UpdateAnActor extends React.Component {
       actor_id: "",
       first_name: "",
       last_name: "",
+      updatedAt: null,
     };
   }
 
@@ -195,15 +196,15 @@ class UpdateAnActor extends React.Component {
   };
 
   handleSubmit = (e) => {
-    e.preventDefauft();
+    e.preventDefault();
 
     axios
       .put(
         "http://localhost:8080/Home/UpdateActor/" +
           this.state.actor_id +
-          "?first_name=" +
+          "/?first_name=" +
           this.state.first_name +
-          "?last_name=" +
+          "&last_name=" +
           this.state.last_name
       )
       // Error handling
