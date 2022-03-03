@@ -99,7 +99,7 @@ class AddLanguage extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post("http://localhost:8080/Home/AddLanguages?name=" + this.state.name)
+      .post("http://3.82.114.88:8080/Home/AddLanguages?name=" + this.state.name)
 
       .then((response) => console.log(response))
       .catch((err) => console.log(err));
@@ -140,7 +140,7 @@ class DeleteLanguage extends React.Component {
 
     axios
       .delete(
-        `http://localhost:8080/Home/DeleteLanguage/${this.state.language_id}`
+        `http://3.82.114.88:8080/Home/DeleteLanguage/${this.state.language_id}`
       )
       .then((response) => {
         console.log(response);
@@ -175,7 +175,7 @@ class UpdateAnActor extends React.Component {
       actor_id: "",
       first_name: "",
       last_name: "",
-      updatedAt: null,
+      // updatedAt: null,
     };
   }
 
@@ -200,7 +200,7 @@ class UpdateAnActor extends React.Component {
 
     axios
       .put(
-        "http://localhost:8080/Home/UpdateActor/" +
+        "http://3.82.114.88:8080/Home/UpdateActor/" +
           this.state.actor_id +
           "/?first_name=" +
           this.state.first_name +
@@ -253,7 +253,7 @@ class LanguageTable extends React.Component {
 
   componentDidMount() {
     axios
-      .get("http://localhost:8080/Home/AllLanguages")
+      .get("http://3.82.114.88:8080/Home/AllLanguages")
       .then((response) =>
         this.setState({ languageDataFromServer: response.data })
       );
@@ -289,7 +289,7 @@ class ActorTable extends React.Component {
 
   componentDidMount() {
     axios
-      .get("http://localhost:8080/Home/AllActors")
+      .get("http://3.82.114.88:8080/Home/AllActors")
       .then((response) =>
         this.setState({ actorDataFromServer: response.data })
       );
@@ -324,7 +324,7 @@ class FilmTable extends React.Component {
 
   componentDidMount() {
     axios
-      .get("http://localhost:8080/Home/AllFilms")
+      .get("http://3.82.114.88:8080/Home/AllFilms")
       .then((response) => this.setState({ filmDataFromServer: response.data }));
   }
 
